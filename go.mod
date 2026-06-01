@@ -7,6 +7,7 @@ require (
 	github.com/bytedance/sonic v1.15.0
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-sql-driver/mysql v1.9.3
+	go.yaml.in/yaml/v3 v3.0.4
 )
 
 require (
@@ -31,7 +32,6 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	go.opentelemetry.io/otel v1.39.0 // indirect
 	go.opentelemetry.io/otel/trace v1.39.0 // indirect
-	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect
 	golang.org/x/sys v0.40.0 // indirect
 )
