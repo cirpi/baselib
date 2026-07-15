@@ -33,6 +33,7 @@ func AddMeta(er error, key string, value any) error {
 			libEr.Meta = map[string]any{}
 		}
 		libEr.Meta[key] = value
+		return libEr
 	}
 	return er
 }
