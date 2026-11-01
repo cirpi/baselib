@@ -1,0 +1,48 @@
+name: Go Integration Tests with MySQL
+
+on:
+  push:
+    branches: [ "master", "db-test" ]
+  pull_request:
+    branches: [ "master", "db-test" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    # 1. Spin up the MySQL database container
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test-db
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      # 2. Pull down your repository code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 3. Setup Go environment (includes caching for faster builds)
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25' # Replace with your Go version
+          cache: true
+
+      # 4. Download Go modules
+      - name: Install Dependencies
+        run: go mod download
+
+      # 5. Run Go tests with environment variables
+      - name: Run Tests
+        run: go test -v ./test
