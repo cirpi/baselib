@@ -1,6 +1,9 @@
 package http
 
-import "net/http"
+import (
+	"net/http"
+	"slices"
+)
 
 type Router struct {
 	mux        *http.ServeMux
@@ -24,11 +27,15 @@ func (r *Router) Group(mw ...Middleware) *Router {
 }
 
 func (r *Router) HandleFunc(pattern string, hf http.HandlerFunc) {
-	r.Handle(pattern, http.HandlerFunc(hf))
+	handler := http.Handler(hf)
+	for i := range slices.Backward(r.middleware) {
+		handler = r.middleware[i](handler)
+	}
+	r.Handle(pattern, handler)
 }
 
 func (r *Router) Handle(pattern string, h http.Handler) {
-	for i := len(r.middleware) - 1; i >= 0; i-- {
+	for i := range slices.Backward(r.middleware) {
 		h = r.middleware[i](h)
 	}
 	r.mux.Handle(pattern, h)
