@@ -1,0 +1,64 @@
+name: Go Integration Tests with MySQL
+
+on:
+  push:
+    branches: [ "master", "develop", "db-test" ]
+  pull_request:
+    branches: [ "master", "develop", "db-test" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    # 1. Spin up the MySQL database container
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_db
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      # 2. ClickHouse Service Container
+      clickhouse:
+        image: clickhouse/clickhouse-server:latest
+        env:
+          CLICKHOUSE_DB: test_db
+          CLICKHOUSE_USER: root
+          CLICKHOUSE_PASSWORD: root
+        ports:
+          # Native TCP port (preferred for most Go drivers like clickhouse-go)
+          - 9001:9000
+          # HTTP interface port (optional, map if your driver uses HTTP)
+          - 8123:8123
+        options:
+          --health-cmd="clickhouse-client --query='SELECT 1'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+
+    steps:
+      # 2. Pull down your repository code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 3. Setup Go environment (includes caching for faster builds)
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25' # Replace with your Go version
+          cache: true
+
+      # 4. Download Go modules
+      - name: Install Dependencies
+        run: go mod download
+
+      # 5. Run Go tests with environment variables
+      - name: Run Tests
+        run: go test -v ./test

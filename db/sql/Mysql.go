@@ -14,12 +14,12 @@ func NewMysqlConn(config Config, opts ...Option) (*sql.DB, error) {
 	if er != nil {
 		return db, er
 	}
-	for _, opt := range opts {
-		opt(db)
-	}
 	er = db.Ping()
 	if er != nil {
 		return nil, er
+	}
+	for _, opt := range opts {
+		opt(db)
 	}
 	return db, nil
 }
