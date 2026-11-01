@@ -2,14 +2,13 @@ name: Go Integration Tests with MySQL
 
 on:
   push:
-    branches: [ "master", "db-test" ]
+    branches: [ "master", "develop", "db-test" ]
   pull_request:
-    branches: [ "master", "db-test" ]
+    branches: [ "master", "develop", "db-test" ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     # 1. Spin up the MySQL database container
     services:
       mysql:
@@ -24,6 +23,25 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
+
+      # 2. ClickHouse Service Container
+      clickhouse:
+        image: clickhouse/clickhouse-server:latest
+        env:
+          CLICKHOUSE_DB: test-db
+          CLICKHOUSE_USER: root
+          CLICKHOUSE_PASSWORD: root
+        ports:
+          # Native TCP port (preferred for most Go drivers like clickhouse-go)
+          - 9001:9000
+          # HTTP interface port (optional, map if your driver uses HTTP)
+          - 8123:8123
+        options:
+          --health-cmd="clickhouse-client --query='SELECT 1'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
 
     steps:
       # 2. Pull down your repository code
