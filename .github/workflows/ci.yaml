@@ -15,7 +15,7 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: test-db
+          MYSQL_DATABASE: test_db
         ports:
           - 3306:3306
         options: >-
@@ -28,7 +28,7 @@ jobs:
       clickhouse:
         image: clickhouse/clickhouse-server:latest
         env:
-          CLICKHOUSE_DB: test-db
+          CLICKHOUSE_DB: test_db
           CLICKHOUSE_USER: root
           CLICKHOUSE_PASSWORD: root
         ports:

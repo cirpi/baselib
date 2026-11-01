@@ -12,7 +12,7 @@ func TestClickhouseConn(t *testing.T) {
 		Port:     "9001",
 		User:     "root",
 		Pass:     "root",
-		Database: "test-db",
+		Database: "test_db",
 	}
 	_, er := clickhouse.NewClickhouseConn(cfg)
 	if er != nil {

@@ -12,7 +12,7 @@ func TestMysqlConn(t *testing.T) {
 		Port:     "3306",
 		User:     "root",
 		Pass:     "root",
-		Database: "test-db",
+		Database: "test_db",
 	}
 	_, er := sql.NewMysqlConn(cfg)
 	if er != nil {
